@@ -20,9 +20,18 @@
 \usepackage{url}
 \usepackage{breakurl}
 
-\usepackage{Sweave}
 \begin{document}
-\input{adan-concordance}
+
+<<include=FALSE>>=
+library(knitr)
+opts_chunk$set(
+concordance=TRUE
+)
+@
+
+<<echo=FALSE>>=
+options(prompt=" ", continue = " ")
+@
 %\SweaveOpts{concordance=TRUE}
 %\timestamp % wget http://www.flaterco.com/util/timestamp.sty
 %<<setup, include=FALSE, echo=FALSE>>=

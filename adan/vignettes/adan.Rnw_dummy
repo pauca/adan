@@ -21,7 +21,14 @@
 \usepackage{breakurl}
 
 \begin{document}
-\SweaveOpts{concordance=TRUE}
+
+<<include=FALSE>>=
+library(knitr)
+opts_chunk$set(
+concordance=TRUE
+)
+@
+
 <<echo=FALSE>>=
 options(prompt=" ", continue = " ")
 @
