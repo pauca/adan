@@ -9,6 +9,9 @@ Carrió P, Pinto M, Ecker G, Sanz F, Pastor M. Applicability Domain Analysis (AD
 ```
 library(devtools)
 install_github("pauca/adan/adan")
+
+library(adan)
+vignette("adan")
 ```
 
 ## Example
