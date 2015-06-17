@@ -63,9 +63,7 @@ You can install them and their dependecies with commands
 \begin{verbatim}
 source("http://bioconductor.org/biocLite.R")
 biocLite(c("Rcpp","pls","ggplot2","reshape","knitr",
-"pcaMethods","Biobase","BiocGenerics","digest","plyr",
-"gtable","reshape2","scales","proto","MASS","stringr",
-"RColorBrewer","munsell","colorspace","dichromat","labeling"))
+"pcaMethods","Biobase","BiocGenerics","digest","plyr"))
 \end{verbatim}
 
 \end{itemize}

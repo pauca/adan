@@ -10,3 +10,21 @@ Carrió P, Pinto M, Ecker G, Sanz F, Pastor M. Applicability Domain Analysis (AD
 library(devtools)
 install_github("pauca/adan/adan")
 ```
+
+## Example
+```
+adan.model <- 
+  adan.build (train.md = train.md, # Molecular descriptors of train set
+              train.a  = train.a,  # Actual values of train set
+              train.p  = train.p,  # Predicted values of train set
+              scale.md = FALSE
+             )
+
+
+adan.output <- 
+  adan.test ( adan.model = adan.model, 
+              query.md = test.md, # Molecular descriptors of test set
+              query.p  = test.p   # Actual values of train  set
+            )
+```
+
