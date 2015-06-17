@@ -1,0 +1,16 @@
+Package: adan
+Type: Package
+Title: Analysis of Aplicability Domain and Reliability Index
+Version: 0.8.6
+Date: 2014-03-17
+Author: Pau Carrio
+Maintainer: <pcarrio@imim.es>
+Description: Aplicability Domain and Reliability Index assesment of models
+License: GPL-2
+Depends: R (>= 2.10), Rcpp, pls, ggplot2, reshape, knitr, pcaMethods,
+        Biobase, BiocGenerics, digest, plyr, gtable, reshape2, scales,
+        proto, MASS, stringr, RColorBrewer, munsell, colorspace,
+        dichromat, labeling
+VignetteBuilder: knitr
+Suggests: RUnit
+Packaged: 2014-03-17 14:23:07 UTC; pcarrio

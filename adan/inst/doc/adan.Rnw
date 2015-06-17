@@ -1,0 +1,314 @@
+\documentclass[a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}  % this is an add-on package to enable including images
+\usepackage{epsfig}
+\usepackage[sc]{mathpazo}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\geometry{verbose,tmargin=2.5cm,bmargin=2.5cm,lmargin=2.5cm,rmargin=2.5cm}
+\setcounter{secnumdepth}{2}
+\setcounter{tocdepth}{2}
+\usepackage{url}
+%\VignetteIndexEntry{Using adan}
+%\usepackage{timestamp}
+\usepackage[unicode=true,pdfusetitle,
+ bookmarks=true,bookmarksnumbered=true,bookmarksopen=true,bookmarksopenlevel=2,
+ breaklinks=false,pdfborder={0 0 1},backref=false,colorlinks=false]
+ {hyperref}
+\hypersetup{
+ pdfstartview={XYZ null null 1}}
+\usepackage{url}
+\usepackage{breakurl}
+
+\begin{document}
+\SweaveOpts{concordance=TRUE}
+<<echo=FALSE>>=
+options(prompt=" ", continue = " ")
+@
+%\SweaveOpts{concordance=TRUE}
+%\timestamp % wget http://www.flaterco.com/util/timestamp.sty
+%<<setup, include=FALSE, echo=FALSE>>=
+%library(knitr)
+% opts_chunk$set(fig.path='figure',
+%                fig.align='center', fig.show='hold', fig.height=4)# several plots side by side
+%              
+% options(width=90)
+% @
+
+
+\title{adan Package Vignette}
+\author{Pau Carri\'{o}, Manuel Pastor}
+\maketitle
+
+This vignette presents \textbf{adan} package through an example session. The aim of the package is
+ assessing the reliability of predictions obtained by in silico methods. More details on the method REF.
+
+\tableofcontents
+
+\section{Installation}
+ 
+\subsection*{Requirements}
+\begin{itemize}
+\item The file adan\_X.X.tar.gz.
+\item R installed with at least version 2.15.3 \url{http://www.r-project.org/}.
+\item R packages that should be already installed: Rcpp, pcaMethods, pls, ggplot2 , reshape, knitr.
+You can install them and their dependecies with commands
+\begin{verbatim}
+source("http://bioconductor.org/biocLite.R")
+biocLite(c("Rcpp","pls","ggplot2","reshape","knitr",
+"pcaMethods","Biobase","BiocGenerics","digest","plyr",
+"gtable","reshape2","scales","proto","MASS","stringr",
+"RColorBrewer","munsell","colorspace","dichromat","labeling"))
+\end{verbatim}
+
+\end{itemize}
+ 
+
+\subsection*{Installation}
+The package can be esaly installed directly from RStudio \footnote{RStudio -> Tools -> Install Packages -> Install from file.} or your prefered graphical user interface.
+
+
+
+To install the package from an R terminal run\footnote{Any text from a \texttt{\#} character to the end of the line is taken to be a comment.}:
+
+\begin{verbatim}
+#  
+# in LINUX - MAC 
+#
+install.packages("/PATH/TO/adan_X.X.tar.gz",
+  repos=NULL,type="source")
+#
+# in WINDOWS  
+# 
+# check that Sys.getenv("TMPDIR") contains a full path in UTF-8
+# change TMPDIR with Sys.setenv(TMPDIR="C:\\PATH\\TO\\PROPER\\TMPDIR")
+# ( note the double backslash and full path)
+#
+install.packages("C:\\PATH\\TO\\adan_X.X.tar.gz", 
+  repos = NULL,type="source")
+#
+\end{verbatim}
+%  R CMD INSTALL /PATH/TO/adan_X.X.tar.gz
+
+For further details on the instalation process visit \url{http://cran.r-project.org/doc/manuals/R-admin.html#Installing-packages}.
+
+
+
+
+
+\section{Example Session}
+In this section we will walk through an example session to get an 
+overview of the two main functions of \textbf{adan} package: \texttt{adan.build} and \texttt{adan.test}. For this session we will use a sample data set included in \textbf{adan} package. The sample data set is the solubility data set  based on Delaney (DOI: \url{http://dx.doi.org/10.1021/ci034243x}).
+The solubility data set contains Pentacle molecular descriptors and solubility values. This sample data was splited into train and test series for demonstrative purposes only. When used in production, \texttt{adan.build} must be trained with all data available while \texttt{adan.test} is used for new compounds. A model was already build and their predictions are also available. Note that adan does not need any information on the model used to obtain the predictions.
+
+First, we load the package with command:
+\begin{verbatim}
+library(adan)
+\end{verbatim}
+% You can allways access this vignette with the command
+% \begin{verbatim}
+% vignette("adan")
+% \end{verbatim}
+
+
+
+Next, we load the data sets with command:
+
+%   Generate data for this vignette
+%   data(solubility)
+%   set.seed(7834)
+%   solubility$set <- sample( c(T,F),nrow(solubility$MD), replace=T,prob=c(0.6,0.4))
+%   solubility$train.md <- solubility$MD[solubility$set,]
+%   solubility$train.a  <- solubility$AqSol[solubility$set]
+%   solubility$test.md  <- solubility$MD[!solubility$set,]
+%   solubility$test.a   <- solubility$AqSol[!solubility$set]
+%   mdlplsr <- plsr(solubility$train.a ~ .,data=as.data.frame(solubility$train.md) ,
+%                    validation="LOO",ncomp=6,scale=FALSE,method="oscores")
+%   plot(R2(mdlplsr,validation="CV",intercept=FALSE))
+%   nPC = 5
+%   solubility$train.p = mdlplsr$validation$pred[,,nPC]
+%   solubility$test.p  = as.vector(predict(mdlplsr, solubility$test.md ,
+%           ncomp=nPC,type = c("response")))
+%           
+%   save(  solubility  ,  file = "data/solubility.adan.Rdata" )        
+
+
+\begin{verbatim}
+data(solubility.adan)
+names(solubility)
+[1] "MD"       "AqSol"    "set"      "train.md" "train.a" 
+[6] "test.md"  "test.a"   "train.p"  "test.p" 
+\end{verbatim}
+
+The list \texttt{solubility} has nine elements. We are only interested in
+\texttt{train.md}, \texttt{test.md}, \texttt{train.a}, \texttt{train.p} and \texttt{test.p}. (i.e. molecular descriptors for train and test sets, predictions for train and test set and activities for only train set.)
+ 
+Next, we build an \texttt{adan} object with the data used to train the model\footnote{The sign \texttt{\$} is used to extract named elements out of an R list.}. The argument \texttt{scale.md} controls if molecular descriptors need to be scaled or not. In our example we do not scale the molecular descriptors.
+
+\begin{verbatim}
+adan.model <- 
+  adan.build ( 
+             train.md = solubility$train.md, 
+             train.a  = solubility$train.a,
+             train.p  = solubility$train.p, 
+             scale.md = FALSE
+             )
+\end{verbatim}
+
+\texttt{adan.model} is the object that should be queried to assess the prediction reliability for query compounds (here the test set). We call \texttt{test.adan} function.
+\begin{verbatim}
+adan.output <- 
+  adan.test ( 
+             adan.model = adan.model,
+             query.md = solubility$test.md, 
+             query.p  = solubility$test.p 
+            )
+
+\end{verbatim}
+
+The output is a list with three elements:
+\begin{itemize}
+\item \texttt{categories}: A data.frame with the assigned \texttt{adan} category.
+\begin{verbatim}
+head(adan.output$categories)
+   categories
+2           0
+4           0
+5           0
+6           0
+7           0
+10          0
+\end{verbatim}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item \texttt{errorCI}: A vector with the extrem values of the error confidence interval. If category is above 3 then a NA value is returned since the prediction is not reliable.
+\begin{verbatim}
+head(adan.output$errorCI)
+   errorCI
+1 1.059562
+2 1.059562
+3 1.059562
+4 1.059562
+5 1.059562
+6 1.059562
+\end{verbatim}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\item \texttt{classification}: A data frame with information on which rules where broken.
+\begin{verbatim}
+ head(adan.output$classification)
+   d2cXTe d2nXTe d2mTe d2cYTe d2nYTe d2nSDEP
+2       0      0     0      0      0       0
+4       0      0     0      0      0       0
+5       0      0     0      0      0       0
+6       0      0     0      0      0       0
+7       0      0     0      0      0       0
+10      0      0     0      0      0       0
+\end{verbatim}
+\end{itemize}
+
+
+\section{``How to'' with your data}
+
+In this section we show you how to use adan with your data step by step.
+
+\subsection*{Prerequisites}
+\begin{itemize}
+\item You have the molecular descriptors, activities and predictions for the train set and
+molecular descriptors and predictions for the query compounds in CSV files. Each row in each file corresponds to a compound.
+\end{itemize}
+
+\subsection*{Step by step}
+Start an R session and load \texttt{adan} package:
+\begin{verbatim}
+library(adan)
+\end{verbatim}
+
+Load train and query data
+
+\begin{verbatim}
+train.md <- read.table( "my_train_md.csv" ,        header = FALSE, sep = ",",
+  stringsAsFactors = FALSE )
+# if activities are stored as columns use the brackets to   
+# select the column. Do not forget the comma inside the brackets.
+train.a <- read.table( "my_train_activities.csv" , header = FALSE, sep = ",",
+  stringsAsFactors = FALSE )[,1]  
+train.p <- read.table( "my_train_predictions.csv", header = FALSE, sep = ",",
+  stringsAsFactors = FALSE )[,1]    
+#  
+#
+query.md <- read.table( "my_query_md.csv" ,        header = FALSE, sep = ",",
+  stringsAsFactors = FALSE )
+query.p <- read.table( "my_query_predictions.csv", header = FALSE, sep = ",",
+  stringsAsFactors = FALSE )[,1]    
+\end{verbatim}
+
+Next, we build an adan model. If your molecular descriptors need to be scaled set 
+the argument \texttt{scale.md} accordingly.
+
+\begin{verbatim}
+adan.model <- 
+  adan.build ( 
+             train.md = train.md, 
+             train.a  = train.a,
+             train.p  = train.p, 
+             scale.md = FALSE
+             )
+\end{verbatim}
+
+Now you are ready to query your adan model with your query compounds.
+
+\begin{verbatim}
+adan.output <- 
+  adan.test ( 
+             adan.model = adan.model,
+             query.md = query.md, 
+             query.p  = query.p 
+            )
+\end{verbatim}
+
+You can save the adan output with
+\begin{verbatim}
+write.table( adan.output$categories,  "my_categories.csv", sep =",",row.names=FALSE)
+write.table( adan.output$errorCI,     "my_errorCI.csv",    sep =",",row.names=FALSE)
+write.table( adan.output$classification, 
+                                      "my_classification.csv", sep =",",row.names=FALSE)
+\end{verbatim}
+% 
+% The object to query for aplicability domain and reliability
+% index is generated with next command:
+% <<ch4>>=
+% adriMdl <- buildADRI( X = Xtrain , Y = Ytrain , P = Ptrain)
+% @
+% You can inspect the adan object if you print it out
+% <<print=TRUE>>=
+% adriMdl
+% @
+% 
+% In order to asses the classification for the test set you can run :
+% <<ch5 >>=
+% cl <- classifyADRI(adriMdl, newX = Xtest  , newP=Ptest )
+% @
+% 
+% The effect of the classification for the applicability domain can be
+% inspected with:
+% \begin{center}
+% <<ch8,fig=TRUE, height=4>>=
+% evaluateAD( adriMdl , newX = Xtest  , newY=Ytest , newP = Ptest )
+% @
+% \end{center}
+% 
+% 
+% The effect of the classification for the reliability index can be
+% inspected with next command. It produces two plots.
+% \begin{center}
+% <<ch9,fig=TRUE, height=4>>=
+% evRI <- evaluateRI( adriMdl , newX = Xtest  , newY=Ytest , newP = Ptest )
+% evRI$g1
+% @
+% <<ch9_,fig=TRUE, height=4>>=
+% evRI$g2
+% @
+% \end{center}
+% 
+% 
+% 
+ \end{document}
