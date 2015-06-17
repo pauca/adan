@@ -1,0 +1,200 @@
+---
+title: "adan Package Vignette"
+author: "Pau Carrió"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+This vignette presents  `adan`  package through an example session. The aim of the package is assessing the reliability of predictions obtained by in silico methods. 
+
+## References
+
+Carrió P, Pinto M, Ecker G, Sanz F, Pastor M. Applicability Domain Analysis (ADAN): A Robust Method for Assessing the Reliability of Drug Property Predictions. J Chem Inf Model 2014; 54: 1500–1511. http://dx.doi.org/10.1021/ci500172z.
+ 
+ 
+## Installation
+```
+library(devtools)
+install_github("pauca/adan/adan")
+```
+
+## Example session
+
+In this section we will walk through an example session to get an 
+overview of the two main functions of ```adan``` package: ```adan.build``` and ```adan.test```. For this session we will use a sample data set included in ```adan``` package. The sample data set is the solubility data set  based on Delaney (DOI:  http://dx.doi.org/10.1021/ci034243x ).
+The solubility data set contains Pentacle molecular descriptors and solubility values. This sample data was splited into train and test series for demonstrative purposes only. When used in production, ```adan.build``` must be trained with all data available while ```adan.test``` is used for new compounds. A model was already build and their predictions are also available. Note that adan does not need any information on the model used to obtain the predictions.
+
+First, we load the package with command:
+```
+library(adan)
+```
+
+Next, we load the data sets with command:
+
+<!--
+'%   Generate data for this vignette
+'%   data(solubility)
+'%   set.seed(7834)
+'%   solubility$set <- sample( c(T,F),nrow(solubility$MD), replace=T,prob=c(0.6,0.4))
+'%   solubility$train.md <- solubility$MD[solubility$set,]
+'%   solubility$train.a  <- solubility$AqSol[solubility$set]
+'%   solubility$test.md  <- solubility$MD[!solubility$set,]
+'%   solubility$test.a   <- solubility$AqSol[!solubility$set]
+'%   mdlplsr <- plsr(solubility$train.a ~ .,data=as.data.frame(solubility$train.md) ,
+'%                    validation="LOO",ncomp=6,scale=FALSE,method="oscores")
+'%   plot(R2(mdlplsr,validation="CV",intercept=FALSE))
+'%   nPC = 5
+'%   solubility$train.p = mdlplsr$validation$pred[,,nPC]
+'%   solubility$test.p  = as.vector(predict(mdlplsr, solubility$test.md ,
+'%           ncomp=nPC,type = c("response")))
+'%           
+'%   save(  solubility  ,  file = "data/solubility.adan.Rdata" )        
+-->
+
+```
+data(solubility.adan)
+names(solubility)
+[1] "MD"       "AqSol"    "set"      "train.md" "train.a" 
+[6] "test.md"  "test.a"   "train.p"  "test.p" 
+```
+
+The list ```solubility``` has nine elements. We are only interested in
+```train.md```, ```test.md```, ```train.a```, ```train.p``` and ```test.p```. (i.e. molecular descriptors for train and test sets, predictions for train and test set and activities for only train set.)
+ 
+Next, we build an ```adan``` object with the data used to train the model. The argument ```scale.md``` controls if molecular descriptors need to be unit variance scaled or not. In our example we do not scale the molecular descriptors.
+
+```
+adan.model <- 
+  adan.build ( 
+             train.md = solubility$train.md, 
+             train.a  = solubility$train.a,
+             train.p  = solubility$train.p, 
+             scale.md = FALSE
+             )
+```
+
+```adan.model``` is the object that should be queried to assess the prediction reliability for query compounds (here the test set). We call ```test.adan``` function.
+```
+adan.output <- 
+  adan.test ( 
+             adan.model = adan.model,
+             query.md = solubility$test.md, 
+             query.p  = solubility$test.p 
+            )
+
+```
+
+The output is a list with three elements:
+
+* ```categories```: A data.frame with the assigned ```adan``` category.
+```
+head(adan.output$categories)
+   categories
+2           0
+4           0
+5           0
+6           0
+7           0
+10          0
+```
+ 
+* ```errorCI```: A vector with the extrem values of the error confidence interval. If category is above 3 then a NA value is returned since the prediction is not reliable.
+```
+head(adan.output$errorCI)
+   errorCI
+1 1.059562
+2 1.059562
+3 1.059562
+4 1.059562
+5 1.059562
+6 1.059562
+```
+ 
+* ```classification```: A data frame with information on which rules where broken.
+```
+ head(adan.output$classification)
+   d2cXTe d2nXTe d2mTe d2cYTe d2nYTe d2nSDEP
+2       0      0     0      0      0       0
+4       0      0     0      0      0       0
+5       0      0     0      0      0       0
+6       0      0     0      0      0       0
+7       0      0     0      0      0       0
+10      0      0     0      0      0       0
+```
+ 
+
+
+## How to... with your data
+
+In this section we show you how to use adan with your data step by step.
+
+### Prerequisites
+
+You have the molecular descriptors, activities and predictions for the train set and molecular descriptors and predictions for the query compounds in CSV files. Each row in each file corresponds to a compound.
+
+###Step by step
+
+Start an R session and load ```adan``` package:
+```
+library(adan)
+```
+
+Load train and query data
+
+```
+train.md <- read.table( "my_train_md.csv" ,        
+                        header = FALSE, sep = ",",
+                        stringsAsFactors = FALSE )
+
+train.a <- read.table( "my_train_activities.csv" , 
+                       header = FALSE, sep = ",",
+                       stringsAsFactors = FALSE )[,1]  
+train.p <- read.table( "my_train_predictions.csv", 
+                        header = FALSE, sep = ",",
+                        stringsAsFactors = FALSE )[,1]    
+
+query.md <- read.table( "my_query_md.csv" ,        
+                        header = FALSE, sep = ",",
+                        stringsAsFactors = FALSE )
+query.p <- read.table( "my_query_predictions.csv", 
+                       header = FALSE, sep = ",",
+                       stringsAsFactors = FALSE )[,1]    
+```
+
+Next, we build an adan model. If your molecular descriptors need to be scaled set 
+the argument ```scale.md``` accordingly.
+
+```
+adan.model <- 
+  adan.build ( 
+             train.md = train.md, 
+             train.a  = train.a,
+             train.p  = train.p, 
+             scale.md = FALSE
+             )
+```
+
+Now you are ready to query your adan model with your query compounds.
+
+```
+adan.output <- 
+  adan.test ( 
+             adan.model = adan.model,
+             query.md = query.md, 
+             query.p  = query.p 
+            )
+```
+
+You can save the adan output with
+```
+write.table( adan.output$categories,"my_categories.csv", 
+          sep =",",row.names=FALSE)
+write.table( adan.output$errorCI, "my_errorCI.csv",    
+          sep =",",row.names=FALSE)
+write.table( adan.output$classification, "my_classification.csv", 
+          sep =",",row.names=FALSE)
+```
