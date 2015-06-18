@@ -14,6 +14,7 @@ Pau Carrió
 }
 
 \examples{
+\dontrun{
 adan.model <- 
   adan.build (train.md = train.md, # Molecular descriptors of train set
               train.a  = train.a,  # Actual values of train set
@@ -27,4 +28,5 @@ adan.output <-
               query.md = test.md, # Molecular descriptors of test set
               query.p  = test.p   # Actual values of train  set
             )
+}            
 }

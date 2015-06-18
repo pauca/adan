@@ -12,6 +12,14 @@
 # 
 # You should have received a copy of the GNU General Public License
 # along with adan.  If not, see <http://www.gnu.org/licenses/>.
+
+
+#' Perform Prediction Reliability and Applicablity Domain assasemnt
+#' 
+#' @param adan.model A adan model built with adan.test.
+#' @param query.md A matrix with molecular descriptors with query data.
+#' @param query.p A vector with predictions for query data.
+#' @return A list with applicability domain assesment and confidence interval estimation.
 adan.test <- function( adan.model , query.md , query.p ){
   
   res <- list()

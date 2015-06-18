@@ -13,6 +13,13 @@
 # You should have received a copy of the GNU General Public License
 # along with adan.  If not, see <http://www.gnu.org/licenses/>.
 
+#' Perform Prediction Reliability and Applicablity Domain assasemnt
+#' 
+#' @param train.md A matrix with molecular descriptors.
+#' @param train.a A vector with activities of train data.
+#' @param train.p A vector with predictions of trian data.
+#' @param scale.md A boolean if molecular descriptors should be unit variance scaled.
+#' @return An adan model.
 adan.build <- function( train.md , train.a , train.p , 
                         scale.md = F){
   buildADAN (
