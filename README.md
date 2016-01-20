@@ -27,7 +27,7 @@ adan.model <-
 adan.output <- 
   adan.test ( adan.model = adan.model, 
               query.md = test.md, # Molecular descriptors of test set
-              query.p  = test.p   # Actual values of train  set
+              query.p  = test.p   # Predicted values of train  set
             )
 ```
 
