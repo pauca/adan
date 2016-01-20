@@ -101,7 +101,9 @@ function(
   # distance to model
   #d2mTr <- apply(XpC,1, function(x) sqrt(crossprod(x))) 
   
-  d <- apply( ( t( ret$XTrain ) - plsMdl$Xmeans) , 2, function(x) sqrt( sum(x*x) ))
+  # using pitagoras theorem
+  d <- apply( ( t( ret$XTrain ) - plsMdl$Xmeans) , 2, function(x) sqrt( sum(x*x) ))  
+  
   s <- apply( Xp %*% t(plsMdl$loadings[,1:ret$ncomp]) , 1, function(x) sqrt( sum(x*x) ))
 
   d2mTr <- sqrt(  abs( d*d - s*s ) / (ncol(ret$XTrain)- ret$ncomp ))
