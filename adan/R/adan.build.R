@@ -24,7 +24,7 @@ adan.build <- function( train.md , train.a , train.p ,
                         scale.md = F , ncomp = NULL){
   buildADAN (
       X= train.md , Y= train.a , P=train.p  , 
-      scale = scale.md , ncomp = NULL , 
+      scale = scale.md , ncomp = ncomp , 
       explvar = 80 , threshold = 0.95
     )
 }
