@@ -22,7 +22,7 @@ function(
   # ncomp: number of LV to be used
   #
  
-  i95 <- round(nrow(X)*0.95) 
+  i95 <- round(nrow(X)*threshold) 
   #print(nrow(X))
   #print(i95)
   if( length(Y) != length(P)) stop("Wrong Input. A dimension issue with P or Y")

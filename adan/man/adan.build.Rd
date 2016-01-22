@@ -4,7 +4,8 @@
 \alias{adan.build}
 \title{Perform Prediction Reliability and Applicablity Domain assasemnt}
 \usage{
-adan.build(train.md, train.a, train.p, scale.md = F, ncomp = NULL)
+adan.build(train.md, train.a, train.p, scale.md = F, ncomp = NULL,
+  threshold = 0.95)
 }
 \arguments{
 \item{train.md}{A matrix with molecular descriptors.}

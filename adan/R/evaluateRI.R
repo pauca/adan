@@ -13,11 +13,11 @@
 # You should have received a copy of the GNU General Public License
 # along with adan.  If not, see <http://www.gnu.org/licenses/>.
 evaluateRI <-
-function( adriMdl , newX  , newY , newP , type = "and"){
+function( adriMdl , newX  , newY , newP , type = "and",conf.level=0.95){
   # get ADRI classification
   cl <- classifyADRI(adriMdl, newX , newP , type )
   
-  sdep <- sd( adriMdl$PTrain - adriMdl$YTrain )*1.96
+  sdep <- sd( adriMdl$PTrain - adriMdl$YTrain )*qnorm( 1-(1-conf.level)/2)
   idcl <- sort(unique(cl))
   inIC <- t(sapply( idcl, function(x){
     cond <- (cl == x)

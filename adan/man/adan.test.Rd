@@ -4,7 +4,7 @@
 \alias{adan.test}
 \title{Perform Prediction Reliability and Applicablity Domain assasemnt}
 \usage{
-adan.test(adan.model, query.md, query.p)
+adan.test(adan.model, query.md, query.p, sdep = NULL, conf.level = 0.95)
 }
 \arguments{
 \item{adan.model}{A adan model built with adan.test.}

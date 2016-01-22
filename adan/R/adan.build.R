@@ -21,10 +21,10 @@
 #' @param scale.md A boolean if molecular descriptors should be unit variance scaled.
 #' @return An adan model.
 adan.build <- function( train.md , train.a , train.p , 
-                        scale.md = F , ncomp = NULL){
+                        scale.md = F , ncomp = NULL, threshold = 0.95){
   buildADAN (
       X= train.md , Y= train.a , P=train.p  , 
       scale = scale.md , ncomp = ncomp , 
-      explvar = 80 , threshold = 0.95
+      explvar = 80 , threshold = threshold
     )
 }
