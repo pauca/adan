@@ -1,8 +1,8 @@
 Package: adan
 Type: Package
 Title: Analysis of Aplicability Domain and Reliability Index
-Version: 0.8.7
-Date: 2015-06-17
+Version: 0.9.0
+Date: 2016-01-25
 Author: Pau Carrio
 Maintainer: <pcarrio@imim.es>
 Description: Aplicability Domain and Reliability Index assesment of models

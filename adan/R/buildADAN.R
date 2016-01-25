@@ -21,7 +21,7 @@ function(
   # scale: 
   # ncomp: number of LV to be used
   #
- 
+  ret$threshold <- threshold
   i95 <- round(nrow(X)*threshold) 
   #print(nrow(X))
   #print(i95)
