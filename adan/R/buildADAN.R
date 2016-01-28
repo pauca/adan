@@ -21,7 +21,7 @@ function(
   # scale: 
   # ncomp: number of LV to be used
   #
-  ret$threshold <- threshold
+ 
   i95 <- round(nrow(X)*threshold) 
   #print(nrow(X))
   #print(i95)
@@ -36,6 +36,7 @@ function(
     P <- as.numeric(levels(P)[P])
   }
   ret <- list()
+  ret$threshold <- threshold
   # calculate SDEP for later CI definition
   ret$SDEP = sd(   Y - P  )
   #
